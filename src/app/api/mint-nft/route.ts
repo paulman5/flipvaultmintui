@@ -35,37 +35,16 @@ export async function POST() {
     const response = await client.submitTransaction(signedTxn)
     await client.waitForTransaction(response.hash)
 
-    const txn = await client.getTransactionByHash(response.hash)
-
-    // Check if transaction failed
-    if ("type" in txn && txn.type === "user_transaction") {
-      if (txn.success) {
-        return NextResponse.json({ success: true, hash: response.hash })
-      } else {
-        const vmStatus = txn.vm_status || "Unknown VM error"
-        let friendlyError = "Mint failed."
-
-        if (
-          vmStatus.includes("ENO_ACTIVE_STAGES") ||
-          vmStatus.includes("not in allowlist")
-        ) {
-          friendlyError = "You are not on the allowlist."
-        }
-
-        return NextResponse.json(
-          { success: false, error: friendlyError },
-          { status: 400 }
-        )
-      }
-    }
-
     return NextResponse.json(
       { success: false, error: "Unexpected transaction result." },
       { status: 400 }
     )
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json(
-      { success: false, error: error.message || "Unknown error" },
+      {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 }
     )
   }
