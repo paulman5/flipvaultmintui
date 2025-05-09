@@ -44,7 +44,7 @@ export default async function handler(
     await client.waitForTransaction(response.hash)
 
     res.status(200).json({ success: true, hash: response.hash })
-  } catch (error: any) {
-    res.status(500).json({ success: false, error: error.message })
+  } catch (error: unknown) {
+    res.status(500).json({ success: false, error })
   }
 }

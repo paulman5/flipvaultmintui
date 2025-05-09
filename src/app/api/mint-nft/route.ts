@@ -36,8 +36,8 @@ export async function POST() {
     await client.waitForTransaction(response.hash)
 
     return NextResponse.json(
-      { success: false, error: "Unexpected transaction result." },
-      { status: 400 }
+      { success: true, hash: response.hash },
+      { status: 200 }
     )
   } catch (error: unknown) {
     return NextResponse.json(

@@ -30,9 +30,9 @@ export default function Home() {
       } else {
         setStatus(`❌ Mint failed`)
       }
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Mint error:", err)
-      setStatus(`❌ Mint failed: ${err.message || "Unknown error"}`)
+      setStatus(`❌ Mint failed: ${err || "Unknown error"}`)
     } finally {
       setLoading(false)
     }
