@@ -8,7 +8,11 @@ dotenv.config()
 const NODE_URL = "https://fullnode.mainnet.aptoslabs.com"
 const client = new AptosClient(NODE_URL)
 
-const PRIVATE_KEY = process.env.APTOS_PRIVATE_KEY!
+const PRIVATE_KEY = process.env.APTOS_PRIVATE_KEY
+if (!PRIVATE_KEY) {
+  throw new Error("APTOS_PRIVATE_KEY environment variable is not set")
+}
+
 const account = AptosAccount.fromAptosAccountObject({
   privateKeyHex: PRIVATE_KEY,
 })
