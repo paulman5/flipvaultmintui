@@ -1,0 +1,9 @@
+{
+  "allowlist": [
+    [
+      "0xc0339e607418ff6ccdc7658c50f82b12b94de1745513249570b46617769b088a",
+      "0xb987f44f1cc3173c96f13c5735e7dd1707d1a476016e0c554ad396d209683417"
+    ]
+  ],
+  "mint_limit_per_address": 1
+}
