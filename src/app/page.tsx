@@ -14,7 +14,6 @@ const client = new AptosClient("https://fullnode.mainnet.aptoslabs.com")
 
 export default function Home() {
   const maxSupply = 10000
-  const [minted] = useState(0)
 
   const { account, signAndSubmitTransaction } = useWallet()
   const [loading, setLoading] = useState(false)
@@ -119,17 +118,7 @@ export default function Home() {
               <CardContent className="pt-6">
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">
-                    <span className="text-white/80">Minted</span>
-                    <span className="text-white font-medium">
-                      {minted} / {maxSupply}
-                    </span>
-                  </div>
-
-                  <div className="w-full bg-white/10 rounded-full h-2.5">
-                    <div
-                      className="bg-blue-500 h-2.5 rounded-full"
-                      style={{ width: `${(minted / maxSupply) * 100}%` }}
-                    ></div>
+                    <span className="text-white font-medium"></span>
                   </div>
 
                   <div className="flex flex-col items-center py-4">
