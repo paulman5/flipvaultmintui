@@ -1,53 +1,46 @@
-import type { NextApiRequest, NextApiResponse } from "next"
-import { AptosClient, AptosAccount } from "aptos"
-import dotenv from "dotenv"
+// import { NextResponse } from "next/server"
 
-dotenv.config()
+// const LAUNCHPAD_ADDRESS =
+//   "0xb987f44f1cc3173c96f13c5735e7dd1707d1a476016e0c554ad396d209683417"
 
-const NODE_URL = "https://fullnode.mainnet.aptoslabs.com"
-const client = new AptosClient(NODE_URL)
+// const COLLECTION_OBJECT_ADDRESS =
+//   "0xb212388936b130efde42230ed85f3b0f1a2f5aa8bd7375ec0e40f03c6c1e4f5c"
 
-const PRIVATE_KEY = process.env.APTOS_PRIVATE_KEY
-if (!PRIVATE_KEY) {
-  throw new Error("APTOS_PRIVATE_KEY environment variable is not set")
-}
+// export async function POST() {
+//   try {
+//     const transaction = {
+//       type: "entry_function_payload", // ✅ REQUIRED for wallet adapter
+//       function: `${LAUNCHPAD_ADDRESS}::launchpad::mint_nft`,
+//       type_arguments: [],
+//       arguments: [COLLECTION_OBJECT_ADDRESS, 1],
+//     }
 
-const account = AptosAccount.fromAptosAccountObject({
-  privateKeyHex: PRIVATE_KEY,
-})
+//     return NextResponse.json({ success: true, transaction })
+//   } catch (error: unknown) {
+//     return NextResponse.json(
+//       {
+//         success: false,
+//         error: error instanceof Error ? error.message : "Unknown error",
+//       },
+//       { status: 500 }
+//     )
+//   }
+// }
 
-const LAUNCHPAD_ADDRESS =
-  "0xb987f44f1cc3173c96f13c5735e7dd1707d1a476016e0c554ad396d209683417"
+import { InputTransactionData } from "@aptos-labs/wallet-adapter-react"
 
 const COLLECTION_OBJECT_ADDRESS =
   "0xb212388936b130efde42230ed85f3b0f1a2f5aa8bd7375ec0e40f03c6c1e4f5c"
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ success: false, error: "Method Not Allowed" })
-  }
+const LAUNCHPAD_ADDRESS =
+  "0xb987f44f1cc3173c96f13c5735e7dd1707d1a476016e0c554ad396d209683417"
 
-  try {
-    const payload = {
-      type: "entry_function_payload",
+export const mintNft = (): InputTransactionData => {
+  return {
+    data: {
       function: `${LAUNCHPAD_ADDRESS}::launchpad::mint_nft`,
-      type_arguments: [],
-      arguments: [COLLECTION_OBJECT_ADDRESS, 1],
-    }
-
-    const txnRequest = await client.generateTransaction(
-      account.address(),
-      payload
-    )
-    const signedTxn = await client.signTransaction(account, txnRequest)
-    const response = await client.submitTransaction(signedTxn)
-    await client.waitForTransaction(response.hash)
-
-    res.status(200).json({ success: true, hash: response.hash })
-  } catch (error: unknown) {
-    res.status(500).json({ success: false, error })
+      functionArguments: [COLLECTION_OBJECT_ADDRESS, 1],
+      typeArguments: [],
+    },
   }
 }

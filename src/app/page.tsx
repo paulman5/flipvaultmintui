@@ -1,19 +1,20 @@
 "use client"
 import Image from "next/image"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import flipvault from "@/public/flipvault.png"
 import flipvaultlogo from "@/public/FlipvaultNFT.svg"
 import { WalletSelector } from "@/components/WalletSelector"
 import { useWallet } from "@aptos-labs/wallet-adapter-react"
-import { fetchMinted } from "@/functions/viewfunctions/fetchMinted"
 import { AptosClient } from "aptos"
+import { mintNft } from "@/functions/mintNFT"
+
+const client = new AptosClient("https://fullnode.mainnet.aptoslabs.com")
 
 export default function Home() {
-  const client = new AptosClient("https://fullnode.mainnet.aptoslabs.com")
   const maxSupply = 10000
-  const [minted, setMinted] = useState(0)
+  const [minted] = useState(0)
 
   const { account, signAndSubmitTransaction } = useWallet()
   const [loading, setLoading] = useState(false)
@@ -22,41 +23,21 @@ export default function Home() {
   async function handleMint() {
     setLoading(true)
     setStatus(null)
+
+    if (!account?.address) {
+      setStatus("❌ Please connect your wallet first")
+      return
+    }
+
     try {
-      if (!account?.address) {
-        setStatus("❌ Please connect your wallet first")
-        return
-      }
+      const payload = mintNft()
 
-      const res = await fetch("/api/mint-nft", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userAddress: account.address }),
-      })
+      setStatus("⏳ Signing transaction...")
 
-      const data = await res.json()
-      if (data.success) {
-        setStatus("⏳ Signing transaction...")
+      const response = await signAndSubmitTransaction(payload)
+      await client.waitForTransaction(response.hash)
 
-        // Sign and submit the transaction using the wallet
-        const response = await signAndSubmitTransaction(data.transaction)
-
-        // Wait for transaction confirmation
-        await client.waitForTransaction(response.hash)
-
-        setStatus("✅ NFT Minted Successfully!")
-
-        // Refresh the minted count
-        const creatorAddress =
-          "0xb987f44f1cc3173c96f13c5735e7dd1707d1a476016e0c554ad396d209683417"
-        const collectionName = "FlipVault Collection"
-        const mintedCount = await fetchMinted(creatorAddress, collectionName)
-        setMinted(mintedCount)
-      } else {
-        setStatus(`❌ Mint failed: ${data.error || "Unknown error"}`)
-      }
+      setStatus("✅ NFT Minted Successfully!")
     } catch (err: unknown) {
       console.error("Mint error:", err)
       setStatus(
@@ -68,21 +49,6 @@ export default function Home() {
       setLoading(false)
     }
   }
-
-  useEffect(() => {
-    async function getMinted() {
-      try {
-        const creatorAddress =
-          "0xb987f44f1cc3173c96f13c5735e7dd1707d1a476016e0c554ad396d209683417"
-        const collectionName = "FlipVault Collection"
-        const mintedCount = await fetchMinted(creatorAddress, collectionName)
-        setMinted(mintedCount)
-      } catch (err) {
-        console.error("Failed to fetch minted count", err)
-      }
-    }
-    getMinted()
-  }, [])
 
   return (
     <main className="min-h-screen bg-gradient-radial from-blue-950 via-blue-900 to-black overflow-hidden relative flex flex-col items-center justify-center">

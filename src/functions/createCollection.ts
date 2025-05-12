@@ -23,7 +23,7 @@ const collectionURI =
   "https://bafybeibqqgymuxsi5qnemyxpijg6ym35hzcf4prkz2gnguwxytvq4uaqhe.ipfs.w3s.link/collection.json"
 const allowlist: string[] = [] // optional, array of addresses
 const startTime = Math.floor(Date.now() / 1000) // now
-const endTime = startTime + 60 * 60 * 24 * 7 // 7 days laterc
+const endTime = startTime + 60 * 60 * 24 * 7 // 7 days later
 
 async function main() {
   const payload = {
@@ -42,10 +42,10 @@ async function main() {
       endTime, // allowlist_end_time
       1, // allowlist_mint_limit_per_addr
       0, // allowlist_mint_fee_per_nft
-      null, // public_mint_start_time
-      null, // public_mint_end_time
-      null, // public_mint_limit_per_addr
-      null, // public_mint_fee_per_nft
+      endTime, // public_mint_start_time (starts after allowlist ends)
+      null, // public_mint_end_time (null means no end time)
+      5, // public_mint_limit_per_addr
+      0, // public_mint_fee_per_nft
     ],
   }
 
