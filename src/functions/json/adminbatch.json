@@ -1,6 +1,9 @@
 {
   "allowlist": [
-    ["0xe0ca2fcb33fa5c8576d6caad8c8c8f0d71c8e0b44b88b6ca2ce31319b8032955"]
+    [
+      "0xe0ca2fcb33fa5c8576d6caad8c8c8f0d71c8e0b44b88b6ca2ce31319b8032955",
+      "0xb987f44f1cc3173c96f13c5735e7dd1707d1a476016e0c554ad396d209683417"
+    ]
   ],
   "mint_limit_per_address": 7000
 }

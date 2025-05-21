@@ -9,6 +9,7 @@ import { WalletSelector } from "@/components/WalletSelector"
 import { useWallet } from "@aptos-labs/wallet-adapter-react"
 import { AptosClient } from "aptos"
 import { mintNft } from "@/functions/mintNFT"
+import { batchMint } from "@/functions/batchMint"
 
 const client = new AptosClient("https://fullnode.mainnet.aptoslabs.com")
 
@@ -17,6 +18,7 @@ export default function Home() {
 
   const { account, signAndSubmitTransaction } = useWallet()
   const [loading, setLoading] = useState(false)
+  const [batchLoading, setBatchLoading] = useState(false)
   const [status, setStatus] = useState<null | string>(null)
 
   async function handleMint() {
@@ -46,6 +48,36 @@ export default function Home() {
       )
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function handleBatchMint() {
+    setBatchLoading(true)
+    setStatus(null)
+
+    if (!account?.address) {
+      setStatus("❌ Please connect your wallet first")
+      return
+    }
+
+    try {
+      const payload = batchMint()
+
+      setStatus("⏳ Signing batch mint transaction...")
+
+      const response = await signAndSubmitTransaction(payload)
+      await client.waitForTransaction(response.hash)
+
+      setStatus("✅ Batch Mint Successful! Minted 6000 NFTs")
+    } catch (err: unknown) {
+      console.error("Batch mint error:", err)
+      setStatus(
+        `❌ Batch mint failed: ${
+          err instanceof Error ? err.message : "Unknown error"
+        }`
+      )
+    } finally {
+      setBatchLoading(false)
     }
   }
 
@@ -121,7 +153,7 @@ export default function Home() {
                     <span className="text-white font-medium"></span>
                   </div>
 
-                  <div className="flex flex-col items-center py-4">
+                  <div className="flex flex-col items-center py-4 space-y-4">
                     {account ? (
                       <>
                         <Button
@@ -129,7 +161,16 @@ export default function Home() {
                           onClick={handleMint}
                           className="text-white font-medium text-base cursor-pointer bg-blue-500 hover:bg-blue-600"
                         >
-                          {loading ? "Minting..." : "Mint NFT"}
+                          {loading ? "Minting..." : "Mint Single NFT"}
+                        </Button>
+                        <Button
+                          disabled={batchLoading}
+                          onClick={handleBatchMint}
+                          className="text-white font-medium text-base cursor-pointer bg-green-500 hover:bg-green-600"
+                        >
+                          {batchLoading
+                            ? "Batch Minting..."
+                            : "Batch Mint 6000 NFTs"}
                         </Button>
                         {status && (
                           <p className="mt-4 text-sm text-white/80 text-center">

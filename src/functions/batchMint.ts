@@ -11,50 +11,29 @@ const client = new AptosClient(NODE_URL)
 // Replace this with your private key (from .env or directly as hex)
 const PRIVATE_KEY =
   "0xe2f2f1fdccb1fd1beb84373cf2f044d65f5c5637831c831894c1929021e93c0c"
-if (!PRIVATE_KEY) {
-  throw new Error("APTOS_PRIVATE_KEY environment variable is not set")
-}
-
 const account = AptosAccount.fromAptosAccountObject({
   privateKeyHex: PRIVATE_KEY,
 })
 
 const LAUNCHPAD_ADDRESS =
   "0xb987f44f1cc3173c96f13c5735e7dd1707d1a476016e0c554ad396d209683417"
-
-const collectionURI =
-  "https://bafybeibqqgymuxsi5qnemyxpijg6ym35hzcf4prkz2gnguwxytvq4uaqhe.ipfs.w3s.link/collection.json"
+const COLLECTION_OBJ_ADDR =
+  "0x729a8dc468da7039377f17ff2c110b6be2a3357ffce0272433137ec6495c4a9a"
 
 // Load allowlist from file
 const raw = fs.readFileSync("adminbatch.json", "utf-8")
 const json = JSON.parse(raw)
 const allowlist: string[] = json.allowlist
-const mintLimitPerAddr: number = json.mint_limit_per_address
-
-const startTime = Math.floor(Date.now() / 1000) // now
-const endTime = startTime + 60 * 60 * 24 * 7 // 7 days later
+const mintAddress = allowlist[0] // Get the first (and only) address from allowlist
 
 async function main() {
   const payload = {
     type: "entry_function_payload",
-    function: `${LAUNCHPAD_ADDRESS}::launchpad::create_collection`,
+    function: `${LAUNCHPAD_ADDRESS}::launchpad::mint_nft`,
     type_arguments: [],
     arguments: [
-      "Flipvault NFT OG Collection launch", // description
-      "Flipvault NFT Genesis Collection", // name
-      collectionURI, // uri
-      7000, // max_supply
-      null, // royalty_percentage
-      null, // pre_mint_amount
-      allowlist, // allowlist from our JSON file
-      startTime, // allowlist_start_time
-      endTime, // allowlist_end_time
-      mintLimitPerAddr, // allowlist_mint_limit_per_addr from our JSON file
-      0, // allowlist_mint_fee_per_nft
-      null, // public_mint_start_time (null means no public mint)
-      null, // public_mint_end_time
-      null, // public_mint_limit_per_addr
-      null, // public_mint_fee_per_nft
+      COLLECTION_OBJ_ADDR, // collection object address
+      6000, // amount to mint (all NFTs)
     ],
   }
 
@@ -66,8 +45,21 @@ async function main() {
   const res = await client.submitTransaction(signedTxn)
   await client.waitForTransaction(res.hash)
 
-  console.log("✅ Collection created!")
+  console.log("✅ Batch mint successful!")
   console.log("Txn hash:", res.hash)
+  console.log(`Minted 7000 NFTs to address: ${mintAddress}`)
+}
+
+export function batchMint() {
+  return {
+    type: "entry_function_payload",
+    function: `${LAUNCHPAD_ADDRESS}::launchpad::mint_nft`,
+    type_arguments: [],
+    arguments: [
+      COLLECTION_OBJ_ADDR, // collection object address
+      6000, // amount to mint
+    ],
+  }
 }
 
 main().catch(console.error)
