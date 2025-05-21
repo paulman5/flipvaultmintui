@@ -7,7 +7,8 @@ const NODE_URL = "https://fullnode.mainnet.aptoslabs.com"
 const client = new AptosClient(NODE_URL)
 
 // Replace this with your private key (from .env or directly as hex)
-const PRIVATE_KEY = process.env.APTOS_PRIVATE_KEY
+const PRIVATE_KEY =
+  "0xe2f2f1fdccb1fd1beb84373cf2f044d65f5c5637831c831894c1929021e93c0c"
 if (!PRIVATE_KEY) {
   throw new Error("APTOS_PRIVATE_KEY environment variable is not set")
 }
