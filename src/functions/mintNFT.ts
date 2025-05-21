@@ -30,7 +30,7 @@
 import { InputTransactionData } from "@aptos-labs/wallet-adapter-react"
 
 const COLLECTION_OBJECT_ADDRESS =
-  "0xbca9fb6aa8a9511973fd137e32d6a4f3a615071e86b7150af3cbd9c878c854af"
+  "0x47dae243b7bb8342f2a005d7705277f28f1dede555ae5e2de3735b880b31ce47"
 
 const LAUNCHPAD_ADDRESS =
   "0xb987f44f1cc3173c96f13c5735e7dd1707d1a476016e0c554ad396d209683417"
