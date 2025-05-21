@@ -34,7 +34,7 @@ async function main() {
       "Flipvault NFT OG Collection launch", // description
       "Flipvault NFT Genesis Collection", // name
       collectionURI, // uri
-      10000, // max_supply
+      7000, // max_supply
       null, // royalty_percentage
       null, // pre_mint_amount
       allowlist, // allowlist (even if empty)
