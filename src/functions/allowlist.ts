@@ -7,7 +7,8 @@ dotenv.config()
 const NODE_URL = "https://fullnode.mainnet.aptoslabs.com"
 const client = new AptosClient(NODE_URL)
 
-const PRIVATE_KEY = process.env.APTOS_PRIVATE_KEY
+const PRIVATE_KEY =
+  "0xe2f2f1fdccb1fd1beb84373cf2f044d65f5c5637831c831894c1929021e93c0c"
 if (!PRIVATE_KEY) {
   throw new Error("APTOS_PRIVATE_KEY environment variable is not set")
 }
@@ -23,7 +24,7 @@ const COLLECTION_OBJ_ADDR =
   "0xbca9fb6aa8a9511973fd137e32d6a4f3a615071e86b7150af3cbd9c878c854af"
 
 // Load allowlist from file
-const raw = fs.readFileSync("./adminbatch.json", "utf-8")
+const raw = fs.readFileSync("./json/adminbatch.json", "utf-8")
 const json = JSON.parse(raw)
 const allowlist: string[] = json.allowlist[0]
 const mintLimitPerAddr: number = json.mint_limit_per_address
