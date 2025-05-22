@@ -39,7 +39,7 @@ export const mintNft = (): InputTransactionData => {
   return {
     data: {
       function: `${LAUNCHPAD_ADDRESS}::launchpad::mint_nft`,
-      functionArguments: [COLLECTION_OBJECT_ADDRESS, 1],
+      functionArguments: [COLLECTION_OBJECT_ADDRESS, 100],
       typeArguments: [],
     },
   }
